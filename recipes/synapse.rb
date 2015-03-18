@@ -1,19 +1,21 @@
 # set up common stuff first
 include_recipe 'smartstack::default'
 
-# set up haproxy
-package 'haproxy' do
-  action :upgrade
-end
+if node.synapse.manual_install
+  # set up haproxy
+  package 'haproxy' do
+    action :upgrade
+  end
 
-file '/etc/default/haproxy' do
-  mode    00444
-  content 'ENABLED=1'
-end
+  file '/etc/default/haproxy' do
+    mode    00444
+    content 'ENABLED=1'
+  end
 
-directory node.synapse.haproxy.sock_dir do
-  owner 'haproxy'
-  group 'haproxy'
+  directory node.synapse.haproxy.sock_dir do
+    owner 'haproxy'
+    group 'haproxy'
+  end
 end
 
 # allow synapse to write the haproxy config
@@ -83,7 +85,9 @@ node.synapse.enabled_services.each do |service_name|
   synapse_config = service['synapse'].deep_to_hash
 
   # set the haproxy port
-  synapse_config['haproxy']['port'] = service['local_port']
+  if service['local_port']
+    synapse_config['haproxy']['port'] = service['local_port']
+  end
 
   # enable proper logging
   if synapse_config['haproxy'].include? 'listen'

@@ -12,6 +12,7 @@ default.synapse.jvmopts = '-Xmx64m -XX:PermSize=64m'
 # override this in your role file or wrapper cookbook
 default.synapse.enabled_services = []
 
+default.synapse.haproxy.manual_install = false
 default.synapse.haproxy.sock_dir = '/var/haproxy'
 default.synapse.haproxy.sock_file = File.join(node.synapse.haproxy.sock_dir, 'stats.sock')
 default.synapse.haproxy.channel = 'local1'
